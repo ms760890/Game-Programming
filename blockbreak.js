@@ -78,8 +78,8 @@ $(function() {
 			p.dy = 1;
 			Q.audio.play('paddlewall.wav');
 		  } else if(p.y > Q.height) { 
-			Q.stage().trigger('removeBall');
-			this.destroy();
+			Q.stage().trigger('removeBall'); //Instead of calling lose game here...call function removeBall
+			this.destroy(); //Destroy current ball, function calls for a new ball
 			//Q.stageScene('lost');
 		  }
 	  });
@@ -111,7 +111,8 @@ $(function() {
     }
   });
   
-  Q.UI.Text.extend("Score",{
+  //Score for game scene
+	Q.UI.Text.extend("Score",{
         init: function(p){
             this._super({
                 label: "score: " + Q.state.get("score"),
@@ -130,6 +131,7 @@ $(function() {
         }
     });
 	
+	//Lives for game scene
 	Q.UI.Text.extend("Lives",{
         init: function(p){
             this._super({
@@ -150,7 +152,7 @@ $(function() {
     });
   
   
-  
+	//Main Title scene
 	Q.scene('title', function(stage) {
         var container = stage.insert(new Q.UI.Container({
             fill: "gray",
@@ -200,6 +202,7 @@ $(function() {
         container.fit(20,20);
     });
 	
+	//Won scene when user wins the game
 	Q.scene('won', function(stage) {
         var container = stage.insert(new Q.UI.Container({
             fill: "gray",
@@ -228,6 +231,7 @@ $(function() {
         container.fit(20,20);
     });
 	
+	//Losing Screen when user loses 3 lives
 	Q.scene('lost', function(stage) {
         var container = stage.insert(new Q.UI.Container({
             fill: "gray",
@@ -256,6 +260,7 @@ $(function() {
         container.fit(20,20);
     });
 	
+	//Takes the Score and Lives declared earlier in the code
 	Q.scene('hud',function(stage){
 		stage.insert(new Q.Score());
 		stage.insert(new Q.Lives());
@@ -278,25 +283,26 @@ $(function() {
 		
         for(var x=0;x<6;x++) {
             for(var y=0;y<5;y++) {
-                stage.insert(new Q.Block({ x: x*50+35, y: y*30+50 }));
+                stage.insert(new Q.Block({ x: x*50+35, y: y*30+50 })); //Adjusted for the HUD
                 blockCount++;
             }
         }
         stage.on('removeBlock',function() {
             blockCount--;
-			Q.state.inc("score",100);
+			Q.state.inc("score",100); //Every block gives 100 points
             if(blockCount == 0) {
                 //reset game when no blocks remain
                 Q.stageScene('won'); //make won later
             }
         });
 		
+		//Added this function to adjust to how the lives work
 		stage.on('removeBall',function() {
 			ballCount--;
 			Q.state.dec("lives",1);
 			if(Q.state.get("lives") <=0){
 				Q.stageScene('lost');
-			}else if(ballCount == 2){
+			}else if(ballCount == 2){		//ballCount goes with lives
 				stage.insert(new Q.Ball());
 			}else if(ballCount == 1){
 				stage.insert(new Q.Ball());
