@@ -7,7 +7,7 @@ $(function() {
 					 
 
   Q.input.keyboardControls();
-  //Q.input.mouseControls();
+  Q.input.mouseControls({cursor: "on"});
   Q.input.touchControls({ 
             controls:  [ ['left','<' ],[],[],[],['right','>' ] ]
   });
@@ -29,6 +29,8 @@ $(function() {
     },
 
     step: function(dt) {
+	  if(Q.state.get("mouse")){
+		this.p.x = Q.inputs['mouseX']; }
       if(Q.inputs['left']) { 
         this.p.x -= dt * this.p.speed;
       } else if(Q.inputs['right']) {
